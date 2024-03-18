@@ -36,3 +36,57 @@ constant cafe_au_lait_prix : std_logic_vector(7 downto 0) := "00001010"; -- 10 D
 constant Americano_prix : std_logic_vector(7 downto 0) := "00001100"; -- 12 DH
 constant Cappuccino_prix : std_logic_vector(7 downto 0) := "00000111"; -- 7 DH
 constant Espresso_prix : std_logic_vector(7 downto 0) := "00001001"; -- 9 DH
+
+begin
+
+process(piece_monnaie, rst, clk)
+begin
+	if rst = '1' then
+		somme <= (others => '0');
+	elsif rising_edge(clk) then
+		case piece_monnaie is
+			when "001" => somme <= somme + "00000001"; -- 1 DH
+			when "010" => somme <= somme + "00000010"; -- 2 DH
+			when "011" => somme <= somme + "00000101"; -- 5 DH
+			when "100" => somme <= somme + "00001010"; -- 10 DH
+			when others => null; -- default case
+		end case;
+	end if;
+end process;
+
+process(cafe_type, rst)
+begin
+	if rst = '1' then
+		cafe_choix <= (others => '0');
+	else
+		cafe_choix <= cafe_type;
+	end if;
+end process;
+
+process(cafe_choix, rst)
+begin
+	if rst = '1' then
+		reste <= (others => 'Z');
+	else
+		case cafe_choix is
+			when "001" => -- cafe au lait
+				if somme >= cafe_au_lait_prix then
+					reste <= somme - cafe_au_lait_prix;
+				end if;
+			when "010" => -- Americano
+				if somme >= Americano_prix then
+					reste <= somme - Americano_prix;
+				end if;
+			when "011" => -- Cappuccino
+				if somme >= Cappuccino_prix then
+					reste <= somme - Cappuccino_prix;
+				end if;
+			when "100" => -- Espresso
+				if somme >= Espresso_prix then
+					reste <= somme - Espresso_prix;
+				end if;
+			when others => null; -- default case
+		end case;
+	end if;
+end process;
+
