@@ -90,3 +90,33 @@ begin
 	end if;
 end process;
 
+process(reste, rst)
+begin
+	if rst = '1' then
+		voy_monnaie_insuff <= '0';
+		voy_cafe_delivre <= '0';
+	else
+		if somme > "00000000" and cafe_choix /= "000" then
+			if reste = "ZZZZZZZZ" then
+				voy_monnaie_insuff <= '1';
+			else
+				voy_cafe_delivre <= '1';
+				voy_monnaie_insuff <= '0';
+			end if;
+		end if;
+	end if;
+end process;
+
+--
+process(somme, reste, rst)
+begin
+	if rst = '1' then
+		somme_monnaie <= (others => '0');
+		reste_monnaie <= (others => '0');
+	else
+		somme_monnaie <= somme;
+		reste_monnaie <= reste;
+	end if;
+end process;
+
+end gestion_monnaie;
